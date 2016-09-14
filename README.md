@@ -11,6 +11,7 @@ The reporting team spoke to the Residential Landlords Associaton, the National H
 ## Data
 
 * A [Google spreadsheet on rent prices across England at the end of July 2016](https://docs.google.com/spreadsheets/d/1EFksJcOniSudbE4B5gWwi2nJgMlrrBIV3pSLhO6k1yo/edit#gid=0) 
+* [Earnings for UK employees by local authority level](http://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/placeofworkbylocalauthorityashetable7)
 
 ## Visualisation
 
