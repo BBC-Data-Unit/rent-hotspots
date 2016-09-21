@@ -21,4 +21,4 @@ The reporting team spoke to the Residential Landlords Associaton, the National H
 
 ## Interactivity
 
-The story included an interactive widget where users could search for their local authority and find out how affordable rent was in their area.
+The story included an interactive widget where users could search for their local authority and find out how affordable rent was in their area. The widget was also used in [this story about fewer homes being available for rent as landlords moved to Airbnb](http://www.bbc.co.uk/news/business-37254670)
