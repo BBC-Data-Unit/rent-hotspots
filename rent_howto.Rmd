@@ -1,0 +1,6 @@
+---
+title: "rent_howto"
+author: "Paul Bradshaw"
+date: "10 January 2017"
+output: html_document
+---
