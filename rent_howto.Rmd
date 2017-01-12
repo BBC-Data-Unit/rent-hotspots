@@ -4,3 +4,139 @@ author: "Paul Bradshaw"
 date: "10 January 2017"
 output: html_document
 ---
+## Grab the data
+
+To work with any data in R we need to first store it in a variable, or R 'object'.
+
+Read the CSV files and put their data in 3 R objects using `read.csv`:
+
+```{r}
+wagesbyregion <- read.csv('wagesbyregion.csv',header=TRUE)
+rentsbyregion <- read.csv('rentsbyregion.csv',header=TRUE)
+bbcregions <- read.csv('bbcregions.csv',header=TRUE)
+```
+
+They should now be listed in the 'Environment' window of R Studio (if you're using R Studio). Make a mental note of the properties of each - for example two have '368 obs.' (368 rows) but one (bbcregions) has 367. A quick look at the data should show you the difference: 'ENGLAND' is not in the bbcregions data, for obvious reasons, which is fine, but will have an effect later as you'll see.
+
+The same window tells us how many 'variables' (columns) each dataset is measuring: 17, 9 and 2.
+
+## Merge the data
+
+Now, because these datasets have a column in common ('Area'), R can put them together. Let's start with two:
+
+```{r}
+rentsandwages <- merge(wagesbyregion,rentsbyregion)
+```
+
+And now let's add the bbcregions data:
+
+```{r}
+rentsandwages <- merge(rentsandwages,bbcregions)
+```
+
+Note that when you do this the number of observations in that merged data drops from 368 to 367. This is because of that row missing from the bbcregions data. Where a match is not found, the row is 'dropped', so we now don't have an ENGLAND row. (If that's a problem, you'd need to create an ENGLAND row in the bbcregions data first, even if it just contains that one word).
+
+## Changing column names
+
+Note that a merge **only** works if the column that they have in common (the column that the merge is based on) has the same name (in this case 'Area'). The fact that the names of columns are the same *is* how the function knows *how* to merge the two datasets. 
+
+You can test this by changing the column name using the `colnames` function:
+
+```{r}
+#The [1] in this code is an index, indicating the first column of that data
+colnames(bbcregions)[1] <- 'authority'
+```
+
+Trying the merges again, but without a column name in common, gives you a very different dataset:
+
+```{r}
+rentsandwages <- merge(wagesbyregion,rentsbyregion)
+rentsandwages <- merge(rentsandwages,bbcregions)
+```
+
+So let's change the column name back:
+
+```{r}
+colnames(bbcregions)[1] <- 'Area'
+```
+
+And do the merge again:
+
+```{r}
+rentsandwages <- merge(wagesbyregion,rentsbyregion)
+rentsandwages <- merge(rentsandwages,bbcregions)
+```
+
+## Saving the merged data as a new spreadsheet
+
+If that's all you want to do, you can save that merged data as a new CSV using `write.csv` with the object name and a name for your new file in quotes like so:
+
+```{r}
+write.csv(rentsandwages, 'mergeddataexport.csv')
+```
+
+
+## Getting an overview of our data
+
+You can generate some quick summary statistics for our new data by using `summary` like so:
+
+```{r}
+summary(rentsandwages)
+```
+
+This tells us things like the most common text values (South East appears 75 times in the LA.Region column), and the minimum, maximum, quartiles, medians and means in numerical columns (the lowest weekly median wage for any authority is 392.4 and the highest is 864.7)
+
+## Generating a subset for just one BBC region
+
+If you just want to see the picture for one BBC region you can do that using `subset` like so:
+
+```{r}
+southeastonly <- subset(rentsandwages, rentsandwages$BBC.region == 'South East')
+```
+
+
+## Generating new columns based on calculations
+
+We have one column telling us what 30% of take-home pay is in each authority, and another telling us what the median one bed rent is. If we want to know how many authorities have average rents which are above that 30% guideline, we'll need to create new data to tell us whether each authority is above it or not.
+
+You can create new data based on existing data like this:
+
+```{r}
+#This takes the monthly take home pay column and times each value by 0.3, or 30%
+rentsandwages$Monthly.take.home.pay * 0.3
+```
+
+Note that this generates as many values as there are in the column.
+
+And you can store that as a new column by assigning it to a column name that doesn't exist, like so:
+
+```{r}
+rentsandwages$monthlypay30percent <- rentsandwages$Monthly.take.home.pay * 0.3
+```
+
+You can also divide one column's values by another (to create a per-person value, for example, if you had populations in one column), or times one by another, or compare one value with another. This will work row-by-row so you'll be comparing/dividing/multiplying/adding/subtracting/etc each value in the first column by the corresponding value in the second column.
+
+```{r}
+#This example generates an error - but that's intentional...
+rentsandwages$Mean.studio < rentsandwages$Mean.one.bed
+```
+
+In some cases it won't work: you'll get an error message like this:
+
+`Warning message: In Ops.factor(rentsandwages$Mean.studio, rentsandwages$Mean.one.bed) :  ‘<’ not meaningful for factors`
+
+This reference to *factors* suggests that the data types are not right. You can use `typeof` to find out what type of data any column is:
+
+```{r}
+typeof(rentsandwages$Mean.studio)
+```
+
+If you get an error like this, you can try using the `as.numeric` function to convert both values to numbers:
+
+```{r}
+#Using a comparison operator like ==, <, >, != will give you a series of TRUE or FALSE results
+as.numeric(rentsandwages$Mean.studio) < as.numeric(rentsandwages$Mean.one.bed)
+```
+
+
+TBC
